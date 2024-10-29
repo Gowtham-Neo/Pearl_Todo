@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,16 +6,17 @@ import TaskList from "../components/TaskList";
 import TaskForm from "../components/TaskForm";
 import Sidebar from "../components/SideBar";
 import CompletedTaskList from "../components/CompletedList";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 export default function Home() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-   
     const getTasks = async () => {
       try {
         const userData = localStorage.getItem("user");
         const userId = userData ? JSON.parse(userData).id : null;
-        const response = await fetch("http://localhost:3000/api/tasks/all", {
+        const response = await fetch(`${BACKEND_URL}/api/tasks/all`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function Home() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/tasks/add", {
+      const response = await fetch(`${BACKEND_URL}/api/tasks/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,16 +77,13 @@ export default function Home() {
   const handleUpdate = async (taskId, updatedData) => {
     console.log("updated task", updatedData);
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${taskId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update task");
@@ -106,12 +103,9 @@ export default function Home() {
 
   const handleDelete = async (taskId) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${taskId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/tasks/${taskId}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete task");
@@ -129,13 +123,13 @@ export default function Home() {
   const handleMarkAsIncomplete = async (taskId) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/tasks/${taskId}/complete`,
+        `${BACKEND_URL}/api/tasks/${taskId}/complete`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ isActive: true }), 
+          body: JSON.stringify({ isActive: true }),
         }
       );
 
@@ -144,7 +138,7 @@ export default function Home() {
       }
 
       const updatedTask = await response.json();
-      
+
       setTasks((prevTasks) =>
         prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
       );
@@ -157,8 +151,7 @@ export default function Home() {
 
   const handleComplete = async (taskId) => {
     try {
-      
-      const response = await fetch(`http://localhost:3000/api/tasks/${taskId}`);
+      const response = await fetch(`${BACKEND_URL}/api/tasks/${taskId}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch task details");
@@ -166,18 +159,16 @@ export default function Home() {
 
       const task = await response.json();
 
- 
       const updatedData = { isActive: !task.isActive };
 
-      
       const updateResponse = await fetch(
-        `http://localhost:3000/api/tasks/${taskId}/complete`,
+        `${BACKEND_URL}/api/tasks/${taskId}/complete`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedData), 
+          body: JSON.stringify(updatedData),
         }
       );
 
@@ -188,7 +179,6 @@ export default function Home() {
       const updatedTask = await updateResponse.json();
       console.log("Task updated:", updatedTask);
 
-   
       setTasks((prevTasks) =>
         prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
       );
@@ -200,8 +190,8 @@ export default function Home() {
     }
   };
 
-  const activeTasks = tasks.filter((task) => task.isActive); 
-  const completedTasks = tasks.filter((task) => !task.isActive); 
+  const activeTasks = tasks.filter((task) => task.isActive);
+  const completedTasks = tasks.filter((task) => !task.isActive);
 
   return (
     <div className="flex w-full h-screen">
@@ -214,7 +204,7 @@ export default function Home() {
             <TaskList
               tasks={activeTasks}
               onDelete={handleDelete}
-              onUpdate={handleUpdate} 
+              onUpdate={handleUpdate}
               onComplete={handleComplete}
             />
           </div>
