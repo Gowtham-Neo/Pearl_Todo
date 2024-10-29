@@ -1,0 +1,21 @@
+/* src/index.css or src/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  @apply m-0;
+}
+.flex-grow::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.flex-grow {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* For the scrolling area to be scrollable while hiding the scrollbar */
+.overflow-auto {
+  overflow: auto; /* Enable scrolling */
+}
