@@ -16,7 +16,6 @@ const user = require("./Router/User");
 
 const app = express();
 
-require("dotenv").config();
 const { User } = require("./models");
 app.use(cors());
 app.use(bodyParser.json());
